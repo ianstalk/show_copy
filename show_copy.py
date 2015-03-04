@@ -52,10 +52,10 @@ def iter_episodes(root):
                 continue
 
 def find_dupes(episode):
-    dest = iter_episodes(episode.episode_path(show_dir))
+    dest = iter_episodes(episode.episode_path(config.show_dir))
     return [ dest_ep for dest_ep in dest \
-           if str(src_episode) = str(dest_episode) \
-           and repr(src_episode) != repr(dest_episode) ]
+           if episode.episode == dest_ep.episode \
+           and episode.file != dest_ep.file ]
 
 def main():
 
@@ -65,6 +65,9 @@ def main():
 
         if not ep.is_sample and ep.extension in config.extensions:
             print ep.file, "found."
+
+            if show_override(ep):
+                print "Overrided show to", ep.show
 
             copied = ep.put_file(config.show_dir)
 
@@ -78,9 +81,11 @@ def main():
                 else:
                     ep_list.append(ep)
 
-            if config.delete_files:
-                print "Removing staged file:", ep.path
-                ep.del_file()
+                if config.delete_files:
+                    print "Removing staged file:", ep.path
+                    ep.del_file()
+            else:
+                print "Nothing to copy."
 
             print '-' * RULER_WIDTH
 
